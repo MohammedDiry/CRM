@@ -29,3 +29,13 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+require __DIR__.'/clients.php'; // لملف الـ Clients
+require __DIR__.'/leads.php'; // لملف الـ Leads
+require __DIR__.'/projects.php'; // لملف الـ Projects
+require __DIR__.'/expenses.php'; // لملف الـ Expenses
+require __DIR__.'/employees.php'; // لملف الـ Employees
+require __DIR__.'/reports.php'; // لملف الـ Reports
+require __DIR__.'/project_team.php'; // لملف الـ Project Team
+require __DIR__.'/employee_ratings.php'; // لملف الـ Employee Ratings
+require __DIR__.'/users.php'; // لملف الـ Users
+
