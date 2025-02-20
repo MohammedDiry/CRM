@@ -9,7 +9,10 @@ class EmployeeRating extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'project_id', 'employee_id', 'rating', 'review'
+        'project_id',
+        'employee_id',
+        'rating',
+        'review'
     ];
 
     public function project()

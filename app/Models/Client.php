@@ -10,7 +10,12 @@ class Client extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'email', 'phone', 'company_name', 'address', 'feedback'
+        'name',
+        'email',
+        'phone',
+        'company_name',
+        'address',
+        'added_by'
     ];
 
     public function projects()
@@ -26,5 +31,15 @@ class Client extends Model
     public function notes()
     {
         return $this->morphMany(Note::class, 'noteable');
+    }
+
+    public function addedBy()
+    {
+        return $this->belongsTo(Employee::class, 'added_by');
+    }
+
+    public function assignedEmployee()
+    {
+        return $this->belongsTo(Employee::class, 'assigned_to');
     }
 }

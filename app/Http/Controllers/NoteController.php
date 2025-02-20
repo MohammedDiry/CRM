@@ -23,80 +23,95 @@ class NoteController extends Controller
         return view('notes.show', compact('notes', 'noteable'));
     }
 
-    // إضافة ملاحظة جديدة
-    public function store(Request $request, $noteableType, $noteableId)
+    public function create($noteableType, $noteableId)
     {
-        $request->validate([
-            'note' => 'required|string|max:255',
+        // التحقق من النوع الصحيح وإحضار البيانات
+        if ($noteableType === 'clients') {
+            $noteable = Client::findOrFail($noteableId);
+        } elseif ($noteableType === 'leads') {
+            $noteable = Lead::findOrFail($noteableId);
+        } else {
+            abort(404); // إذا كان النوع غير معروف
+        }
+
+        return view('notes.create', [
+            'noteableType' => $noteableType,
+            'noteableId' => $noteableId,
+            'noteable' => $noteable
+        ]);
+    }
+
+
+    // إضافة ملاحظة جديدة
+    public function store(Request $request)
+    {
+        $validatedData = $request->validate([
+            'note' => 'required|string',
+            'noteableType' => 'required|in:clients,leads',
+            'noteableId' => 'required|integer',
         ]);
 
-        // تحديد النوع والـ ID الملاحظات بناءً على الـ polymorphic relationship
-        $noteableClass = "App\\Models\\" . ucfirst($noteableType);
-        $noteable = $noteableClass::findOrFail($noteableId);
+        // التأكد من صحة الكائن
+        if ($validatedData['noteableType'] === 'clients') {
+            $noteable = Client::findOrFail($validatedData['noteableId']);
+        } elseif ($validatedData['noteableType'] === 'leads') {
+            $noteable = Lead::findOrFail($validatedData['noteableId']);
+        } else {
+            abort(404);
+        }
 
-        // إضافة الملاحظة
-        $note = new Note([
-            'note' => $request->input('note'),
-            'noteable_type' => $noteableClass,
-            'noteable_id' => $noteable->id,
-            'employee_id' => Auth::id(), // استخدام الموظف الحالي
-        ]);
-
+        // إنشاء الملاحظة
+        $note = new Note();
+        $note->note = $validatedData['note'];
+        $note->employee_id = auth()->user()->employee->id; // الموظف الحالي
+        $note->noteable()->associate($noteable); // ربط الملاحظة بالكائن (Client أو Lead)
         $note->save();
 
-        return redirect()->back()->with('success', 'Note added successfully.');
+        return redirect()->route($validatedData['noteableType'] . '.show', $validatedData['noteableId'])
+            ->with('success', 'Note added successfully.');
     }
+
+
 
     // تعديل ملاحظة
-public function edit($noteId)
-{
-    // جلب الملاحظة حسب الـ ID
-    $note = Note::findOrFail($noteId);
+    public function edit(Note $note)
+    {
+        // السماح فقط لصاحب الملاحظة أو المشرف (Admin)
+        if (auth()->user()->employee->id !== $note->employee_id && !auth()->user()->isAdmin()) {
+            abort(403);
+        }
 
-    // التأكد من أن الملاحظة تخص الموظف الحالي
-    if ($note->employee_id !== Auth::id()) {
-        return redirect()->back()->with('error', 'You are not authorized to edit this note.');
+        return view('notes.edit', compact('note'));
     }
 
-    return view('notes.edit', compact('note'));
-}
+    // تحديث الملاحظة
+    public function update(Request $request, Note $note)
+    {
+        // التحقق من الصلاحيات
+        if (auth()->user()->employee->id !== $note->employee_id && !auth()->user()->isAdmin()) {
+            abort(403);
+        }
 
-// تحديث الملاحظة
-public function update(Request $request, $noteId)
-{
-    $request->validate([
-        'note' => 'required|string|max:255',
-    ]);
+        $validated = $request->validate([
+            'note' => 'required|string',
+        ]);
 
-    $note = Note::findOrFail($noteId);
+        $note->update($validated);
 
-    // التأكد من أن الملاحظة تخص الموظف الحالي
-    if ($note->employee_id !== Auth::id()) {
-        return redirect()->back()->with('error', 'You are not authorized to edit this note.');
+        return redirect()->back()->with('success', 'Note updated successfully.');
     }
 
-    $note->note = $request->input('note');
-    $note->save();
 
-    return redirect()->route('notes.show', [
-        'noteableType' => class_basename($note->noteable_type),
-        'noteableId' => $note->noteable_id
-    ])->with('success', 'Note updated successfully.');
-}
+    // حذف ملاحظة
+    public function destroy(Note $note)
+    {
+        // السماح فقط لصاحب الملاحظة أو المشرف (Admin)
+        if (auth()->user()->employee->id !== $note->employee_id && !auth()->user()->isAdmin()) {
+            abort(403);
+        }
 
-// حذف ملاحظة
-public function destroy($noteId)
-{
-    $note = Note::findOrFail($noteId);
+        $note->delete();
 
-    // التأكد من أن الملاحظة تخص الموظف الحالي
-    if ($note->employee_id !== Auth::id()) {
-        return redirect()->back()->with('error', 'You are not authorized to delete this note.');
+        return redirect()->back()->with('success', 'Note deleted successfully.');
     }
-
-    $note->delete();
-
-    return redirect()->back()->with('success', 'Note deleted successfully.');
-}
-
 }

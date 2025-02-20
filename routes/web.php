@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,8 +16,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('index');
-})->name('index');
+    return view('welcome');
+})->name('welcome');
+
+Route::get('dash', [DashboardController::class, 'index'])->name('index');
+
+
 
 
 
@@ -33,15 +38,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
-require __DIR__.'/clients.php'; // لملف الـ Clients
-require __DIR__.'/leads.php'; // لملف الـ Leads
-require __DIR__.'/projects.php'; // لملف الـ Projects
-require __DIR__.'/expenses.php'; // لملف الـ Expenses
-require __DIR__.'/employees.php'; // لملف الـ Employees
-require __DIR__.'/reports.php'; // لملف الـ Reports
-require __DIR__.'/project_team.php'; // لملف الـ Project Team
-require __DIR__.'/employee_ratings.php'; // لملف الـ Employee Ratings
-require __DIR__.'/users.php'; // لملف الـ Users
-require __DIR__.'/invoices.php'; // لملف الـ Invoices
-
+require __DIR__ . '/auth.php';
+require __DIR__ . '/clients.php'; // لملف الـ Clients
+require __DIR__ . '/leads.php'; // لملف الـ Leads
+require __DIR__ . '/projects.php'; // لملف الـ Projects
+require __DIR__ . '/expenses.php'; // لملف الـ Expenses
+require __DIR__ . '/employees.php'; // لملف الـ Employees
+require __DIR__ . '/reports.php'; // لملف الـ Reports
+require __DIR__ . '/project_team.php'; // لملف الـ Project Team
+require __DIR__ . '/employee_ratings.php'; // لملف الـ Employee Ratings
+require __DIR__ . '/invoices.php'; // لملف الـ Invoices
+require __DIR__ . '/notes.php'; // لملف الـ note

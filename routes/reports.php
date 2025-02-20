@@ -3,5 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReportController;
 
-Route::resource('reports', ReportController::class);
-Route::get('reports/{report}/download', [ReportController::class, 'download'])->name('reports.download');
+Route::delete('reports/{reports}', [ReportController::class, 'destroy'])->name('reports.destroy')->middleware('check.admin.or.user.admin');
+
+
+
+Route::resource('reports', ReportController::class)->except(['destroy'])->middleware('auth');;

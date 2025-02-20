@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('phone');
             $table->string('company_name')->nullable();
             $table->text('address')->nullable();
-            $table->text('feedback')->nullable();
+            $table->foreignId('assigned_to')->constrained('employees'); // Employee responsible for the lead
             $table->timestamps();
         });
     }

@@ -26,10 +26,9 @@ return new class extends Migration
             $table->decimal('amount_paid', 10, 2)->nullable();
             $table->date('payment_date')->nullable(); // تاريخ السداد - سيتم تعبئته عند الدفع
             $table->text('notes')->nullable();
-
+            $table->foreignId('created_by')->nullable()->constrained('employees')->nullOnDelete();
             $table->timestamps();
         });
-
     }
 
     /**

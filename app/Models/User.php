@@ -49,4 +49,10 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Employee::class);
     }
+
+
+    public function isAdmin()
+    {
+        return $this->role === 'Admin';
+    }
 }

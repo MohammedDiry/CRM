@@ -12,7 +12,10 @@ class ProjectTeam extends Model
     protected $table = 'project_team';
 
     protected $fillable = [
-        'project_id', 'employee_id', 'team_lead_id', 'assigned_date'
+        'project_id',
+        'employee_id',
+        'team_lead_id',
+        'assigned_date'
     ];
 
     public function employee()

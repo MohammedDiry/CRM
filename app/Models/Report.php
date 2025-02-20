@@ -10,11 +10,20 @@ class Report extends Model
     use HasFactory;
 
     protected $fillable = [
-        'report_type', 'generated_by', 'data'
+        'report_type',
+        'generated_by',
+        'data',
+        'project_id'
     ];
 
     public function generatedBy()
     {
         return $this->belongsTo(Employee::class, 'generated_by');
+    }
+
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class, 'project_id'); // علاقة اختيارية بمشروع
     }
 }

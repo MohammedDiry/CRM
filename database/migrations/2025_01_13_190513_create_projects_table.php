@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date')->nullable();
             $table->decimal('budget', 10, 2)->default(0.00);
-            $table->enum('status', ['Ongoing', 'Completed', 'On Hold'])->default('Ongoing');
+            $table->enum('status', ['Active', 'Completed', 'On Hold'])->default('Active');
             $table->timestamps();
         });
     }

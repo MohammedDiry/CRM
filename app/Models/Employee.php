@@ -10,7 +10,11 @@ class Employee extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'email', 'phone', 'role', 'password'
+        'name',
+        'email',
+        'phone',
+        'role',
+        'password'
     ];
 
     protected $hidden = [
@@ -24,11 +28,31 @@ class Employee extends Model
 
     public function projects()
     {
-        return $this->belongsToMany(Project::class, 'project_team');
+        return $this->belongsToMany(Project::class, 'project_team')->withPivot('assigned_date', 'team_lead_id');;
     }
 
     public function reports()
     {
         return $this->hasMany(Report::class, 'generated_by');
+    }
+
+    public function employeeRatings()
+    {
+        return $this->hasMany(EmployeeRating::class);
+    }
+
+    public function users()
+    {
+        return $this->hasOne(User::class);
+    }
+
+    public function clients()
+    {
+        return $this->hasMany(Client::class, 'added_by');
+    }
+
+    public function assignedClient()
+    {
+        return $this->hasMany(Client::class, 'assigned_to');
     }
 }

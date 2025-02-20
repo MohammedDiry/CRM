@@ -18,9 +18,9 @@ class Invoice extends Model
         'amount_paid',
         'payment_date',
         'notes',
+        'created_by'
     ];
 
-    // العلاقة مع المشروع
     public function project()
     {
         return $this->belongsTo(Project::class);
@@ -31,5 +31,14 @@ class Invoice extends Model
     {
         return $this->hasOneThrough(Client::class, Project::class, 'id', 'id', 'project_id', 'client_id');
     }
-}
 
+    public function expenses()
+    {
+        return $this->hasMany(Expense::class);
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(Employee::class, 'created_by');
+    }
+}

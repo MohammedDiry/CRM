@@ -19,7 +19,6 @@ return new class extends Migration
             $table->enum('status', ['New', 'Contacted', 'Won', 'Lost'])->default('New');
             $table->enum('source', ['Social Media', 'Website', 'Referral', 'Other'])->default('Other');
             $table->foreignId('assigned_to')->constrained('employees'); // Employee responsible for the lead
-            $table->text('notes')->nullable();
             $table->dateTime('converted_at')->nullable(); // New column for conversion date
             $table->timestamps();
         });
